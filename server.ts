@@ -1,28 +1,30 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import http from 'http';
+import express from 'express';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import * as dotenv from 'dotenv';
+const userRouters = require('./app/routes/routes');
+const db = require('./app/Models/index');
 
+dotenv.config({ path: __dirname + '/.env'});
+
+const PORT = process.env.PORT || 3000;
 const app = express();
-
-var corsOptions = {
-  origin: "http://localhost:8081"
-};
-
-app.use(cors(corsOptions));
-
-// parse requests of content-type - application/json
 app.use(bodyParser.json());
 
-// parse requests of content-type - application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
+// middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Game-Time app." });
+// synchronize the database
+db.sequelize.sync({ force: true }).then(() => {
+  console.log('DB has been synchronized');
 });
 
-// set port, listen for requests
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+app.use('/api/users', userRouters);
+
+const server = http.createServer(app);
+server.listen(PORT, () => {
+  console.log(`Server start at PORT: ${PORT}`);
 });

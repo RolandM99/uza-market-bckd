@@ -1,5 +1,4 @@
 const express = require("express");
-// const db = require("../Models/userModel");
 const db = require("../Models");
 
  const User = db.user;

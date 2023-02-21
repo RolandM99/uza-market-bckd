@@ -84,7 +84,41 @@ const { email, password } = req.body;
  }
 };
 
+const update = async (req : any, res: any) => {
+  try {
+    const result = await UserTable.update({ ...req.body, updateAt: Date.now()},
+     {
+      where: {
+        id: req.params.id
+      }
+     });
+      if (result[0] === 0) {
+        return res.status(404).json(
+          {
+            status: "fail",
+            message: "User not found"
+          }
+        )
+      }
+
+      const user = await UserTable.findByPk(req.params.id);
+
+      res.status(200).json({
+        status: "success",
+        data: {
+          user,
+        },
+      });
+
+  } catch (error: any) {
+    res.status(200).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+  }
 module.exports = {
  signup,
  login,
+ update,
 };

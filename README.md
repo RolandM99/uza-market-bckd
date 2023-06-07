@@ -1,5 +1,3 @@
-# game-time-bckd
+# Uza-market
 
-Realtime multiplayer game platform using NodeJs, socket.io, TypeScript and PostgreSQL.
-To run the project you need to have NodeJs and PostgreSQL installed.
-Run using `npm run dev` or `yarn run dev` in the root directory to start the server.
+`Uza-market` is an online platform that connects businesses and facilitates transactions between them. It serves as a digital marketplace where businesses can buy and sell products or services to other businesses.

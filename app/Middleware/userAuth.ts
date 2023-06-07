@@ -10,7 +10,8 @@ const db = require("../Models");
  try {
    const username = await User.findOne({
      where: {
-       userName: req.body.userName,
+       firstName: req.body.firstName,
+       lastName: req.body.lastName,
      },
    });
    //if username exist in the database respond with a status of 409

@@ -1,4 +1,5 @@
-const express = require("express");
+import { Request ,Response, NextFunction } from "express";
+
 const db = require("../Models");
 
  const User = db.user;
@@ -36,8 +37,31 @@ const db = require("../Models");
    console.log(error);
  }
 };
+// Function to check if the user is a vendor
+
+export const isVendor = async ( req:Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const user = await User.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (user?.userType !== "Vendor") {
+      res.status(409).json({ message: "Only vendors can manage products"});
+      return;
+    }
+
+    next();
+  } catch (error) {
+    console.log(error);
+    throw error; // Re-throw the error to ensure a Promise is always returned
+  }
+};
+
 
 //exporting module
  module.exports = {
- saveUser,
+  saveUser,
+  isVendor,
 };

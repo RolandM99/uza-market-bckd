@@ -24,12 +24,12 @@ router.post('/login', login )
  router.post("/reset-password/:token", resetPassword);
 
  // Create a new product
-    router.post(":id/products", createProduct);
+    router.post("/:id/products", userAuth.isVendor, createProduct);
     // Retrieve all products
-    router.get("/products/all", getAllProducts);
+    router.get("/:id/products/all", userAuth.isVendor,  getAllProducts);
     // Update a product with id
-    router.put("/products/:id", updateProduct);
+    router.put("/:id/products/:id", userAuth.isVendor,  updateProduct);
     // Delete a product with id
-    router.delete("/products/:id", deleteProduct);
+    router.delete("/:id/products/:id", userAuth.isVendor,  deleteProduct);
 
 module.exports = router

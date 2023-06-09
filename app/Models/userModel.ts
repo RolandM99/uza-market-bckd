@@ -12,7 +12,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       type: DataTypes.STRING,
     },
     userType: {
-      type: DataTypes.ENUM('Vendor', 'Buyer'),
+      type: DataTypes.ENUM("Vendor", "Buyer"),
       allowNull: false,
     },
     companyName: {

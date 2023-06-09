@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { isVendor } from '../Middleware/userAuth';
 const dataPro = require('../Models');
 
 const Product = dataPro.product;
@@ -6,19 +7,27 @@ const Product = dataPro.product;
 // Create a new product
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const { userType } = req.body; // Assuming the authenticated user's userType is available in req.body
+    
+    await isVendor(req, res, async () => {;
 
-    if (userType !== 'Vendor') {
-      return res.status(403).json({ message: 'Only vendors can create products' });
+    const { productName, productImage, productPrice, attributes, productCategory, reviews, rating } = req.body;
+
+    const productData = {
+        productName,
+        productImage,
+        productPrice,
+        attributes,
+        productCategory,
+        reviews,
+        rating
     }
-
-    const productData = req.body;
-    const userId = req.params.id;
+    const vendorId = req.params.id;
 
     // Create the product and associate it with the user
-    const product = await Product.create({ ...productData, userId });
-
+    const product = await Product.create(productData, { vendorId });
     return res.status(201).json(product);
+    });
+    return;
   } catch (error) {
     console.error('Error creating product:', error);
     return res.status(500).json({ message: 'Failed to create product' });
@@ -26,11 +35,13 @@ export const createProduct = async (req: Request, res: Response) => {
 };
 
 // Get all products
-export const getAllProducts = async (res: Response) => {
+export const getAllProducts = async (req: Request, res: Response) => {
     try {
-        const products = await Product.findAll();
-    
-        return res.status(200).json(products);
+        await isVendor(req, res, async () => {
+            const products = await Product.findAll();
+            return res.status(200).json(products);
+        });
+        return;
     } catch (error) {
         console.error('Error getting products:', error);
         return res.status(500).json({ message: 'Failed to get products' });
@@ -39,57 +50,55 @@ export const getAllProducts = async (res: Response) => {
 
 // Update a product
 export const updateProduct = async (req: Request, res: Response) => {
-  try {
-    const { userType } = req.body; // Assuming the authenticated user's userType is available in req.body
+    try {
+        await isVendor(req, res, async () => {
+            const { id } = req.params;
+            const { productName, productImage, productPrice, attributes, productCategory, reviews, rating } = req.body;
 
-    if (userType !== 'Vendor') {
-      return res.status(403).json({ message: 'Only vendors can update products' });
+            // Find the product by its ID
+            const product = await Product.findByPk(id);
+
+            if (!product) {
+                return res.status(404).json({ message: 'Product not found' });
+            }
+
+            // Update the product
+            await product.update({
+                productName,
+                productImage,
+                productPrice,
+                attributes,
+                productCategory,
+                reviews,
+                rating
+            });
+
+            return res.status(200).json(product);
+        });
+    } catch (error) {
+        
     }
-
-    const { id } = req.params;
-    const productData = req.body;
-
-    // Find the product by its ID
-    const product = await Product.findByPk(id);
-
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-
-    // Update the product
-    await product.update(productData);
-
-    return res.status(200).json(product);
-  } catch (error) {
-    console.error('Error updating product:', error);
-    return res.status(500).json({ message: 'Failed to update product' });
-  }
 };
 
 // Delete a product
 export const deleteProduct = async (req: Request, res: Response) => {
-  try {
-    const { userType } = req.body; // Assuming the authenticated user's userType is available in req.body
+    try {
+        await isVendor(req, res, async () => {
+            const { id } = req.params;
 
-    if (userType !== 'Vendor') {
-      return res.status(403).json({ message: 'Only vendors can delete products' });
+            // Find the product by its ID
+            const product = await Product.findByPk(id);
+
+            if (!product) {
+                return res.status(404).json({ message: 'Product not found' });
+            }
+
+            // Delete the product
+            await product.destroy();
+
+            return res.status(204).json({ message: 'Product deleted successfully' });
+        });
+    } catch (error) {
+        
     }
-
-    const { id } = req.params;
-
-    // Find the product by its ID
-    const product = await Product.findByPk(id);
-
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-
-    // Delete the product
-    await product.destroy();
-
-    return res.status(204).end();
-  } catch (error) {
-    console.error('Error deleting product:', error);
-    return res.status(500).json({ message: 'Failed to delete product' });
-  }
 };

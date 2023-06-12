@@ -76,7 +76,7 @@ export const updateProduct = async (req: Request, res: Response) => {
             return res.status(200).json(product);
         });
     } catch (error) {
-        
+        console.error('Error updating product:', error);
     }
 };
 
@@ -99,6 +99,6 @@ export const deleteProduct = async (req: Request, res: Response) => {
             return res.status(204).json({ message: 'Product deleted successfully' });
         });
     } catch (error) {
-        
+        console.error('Error deleting product:', error);
     }
 };

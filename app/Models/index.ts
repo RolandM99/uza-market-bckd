@@ -21,5 +21,10 @@ db.sequelize = sequelize;
 
 db.user = require("./userModel")(sequelize, DataTypes);
 db.product = require("./productModel")(sequelize, DataTypes);
+db.order = require("./orderModel")(sequelize, DataTypes);
+db.payment = require("./paymentModel")(sequelize, DataTypes);
+db.shipment = require("./shipmentModel")(sequelize, DataTypes);
+db.whitelist = require("./whitlistModel")(sequelize, DataTypes);
+db.cart = require("./cartModel")(sequelize, DataTypes);
 
 module.exports = db;

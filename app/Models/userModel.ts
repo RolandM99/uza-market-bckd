@@ -46,6 +46,23 @@ module.exports = (sequelize: any, DataTypes: any) => {
     },
   });
 
+  User.associate = (models: any) => {
+    User.hasMany(models.Order, {
+      onDelete: "cascade",
+    });
+    User.hasMany(models.Cart, {
+      foreignKey: {
+        allowNull: false,
+      },
+    });
+    User.hasMany(models.Payment, {
+      onDelete: "cascade",
+    });
+    User.hasMany(models.Shipment, {
+      onDelete: "cascade",
+    });
+  };
+
   return User;
 };
 

@@ -59,9 +59,28 @@ export const isVendor = async ( req:Request, res: Response, next: NextFunction):
   }
 };
 
+export const isLoggedin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const user = await User.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+    if(user){
+      next();
+    }else{
+      res.status(409).json({ message: "Please log in"});
+      return;
+    }
+  } catch (error) {
+    
+  }
+};
+
 
 //exporting module
  module.exports = {
   saveUser,
   isVendor,
+  isLoggedin
 };

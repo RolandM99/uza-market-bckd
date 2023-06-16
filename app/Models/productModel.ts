@@ -9,11 +9,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
         allowNull: false,
       },
       productPrice: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      attributes: {
-        type: DataTypes.STRING,
+        type: DataTypes.DECIMAL,
         allowNull: false,
       },
       productCategory: {
@@ -26,6 +22,14 @@ module.exports = (sequelize: any, DataTypes: any) => {
       rating: {
         type: DataTypes.INTEGER,
       },
+      productDescription: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      stock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     });
   
     Product.associate = (models: any) => {
@@ -35,6 +39,12 @@ module.exports = (sequelize: any, DataTypes: any) => {
           allowNull: false,
         },
       });
+        // Define the association with the Cart model
+        Product.hasMany(models.Cart, {
+            foreignKey: {
+                allowNull: false,
+            },
+        });
     };
   
     return Product;

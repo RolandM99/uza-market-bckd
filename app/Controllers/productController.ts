@@ -1,3 +1,4 @@
+import { isLoggedin } from './../Middleware/userAuth';
 import { Request, Response } from 'express';
 import { isVendor } from '../Middleware/userAuth';
 const dataPro = require('../Models');
@@ -10,16 +11,17 @@ export const createProduct = async (req: Request, res: Response) => {
     
     await isVendor(req, res, async () => {;
 
-    const { productName, productImage, productPrice, attributes, productCategory, reviews, rating } = req.body;
+    const { productName, productImage, productPrice, productCategory, reviews, rating, productDescription, stock } = req.body;
 
     const productData = {
         productName,
         productImage,
         productPrice,
-        attributes,
         productCategory,
         reviews,
-        rating
+        rating,
+        productDescription,
+        stock
     }
     const vendorId = req.params.id;
 
@@ -37,11 +39,11 @@ export const createProduct = async (req: Request, res: Response) => {
 // Get all products
 export const getAllProducts = async (req: Request, res: Response) => {
     try {
-        await isVendor(req, res, async () => {
-            const products = await Product.findAll();
-            return res.status(200).json(products);
+        await isLoggedin(req, res, async () => {
+        const products = await Product.findAll();
+        return res.status(200).json(products);
         });
-        return;
+        return
     } catch (error) {
         console.error('Error getting products:', error);
         return res.status(500).json({ message: 'Failed to get products' });
@@ -53,7 +55,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     try {
         await isVendor(req, res, async () => {
             const { id } = req.params;
-            const { productName, productImage, productPrice, attributes, productCategory, reviews, rating } = req.body;
+            const { productName, productImage, productPrice, productCategory, reviews, rating, productDescription, stock } = req.body;
 
             // Find the product by its ID
             const product = await Product.findByPk(id);
@@ -67,16 +69,17 @@ export const updateProduct = async (req: Request, res: Response) => {
                 productName,
                 productImage,
                 productPrice,
-                attributes,
                 productCategory,
                 reviews,
-                rating
+                rating,
+                productDescription,
+                stock
             });
 
             return res.status(200).json(product);
         });
     } catch (error) {
-        
+        console.error('Error updating product:', error);
     }
 };
 
@@ -99,6 +102,6 @@ export const deleteProduct = async (req: Request, res: Response) => {
             return res.status(204).json({ message: 'Product deleted successfully' });
         });
     } catch (error) {
-        
+        console.error('Error deleting product:', error);
     }
 };

@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
 const userRouters = require('./app/routes/routes');
+const cartRouters = require('./app/routes/cartRoutes');
 const db = require('./app/Models/index');
 
 dotenv.config({ path: __dirname + '/.env'});
@@ -23,6 +24,7 @@ db.sequelize.sync({ force: true }).then(() => {
 });
 
 app.use('/api/users', userRouters);
+app.use('/api', cartRouters);
 
 const server = http.createServer(app);
 server.listen(PORT, () => {

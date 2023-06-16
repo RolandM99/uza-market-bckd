@@ -1,10 +1,12 @@
 import express from 'express';
+const userAuth = require('../Middleware/userAuth')
 const userController = require('../Controllers/userController')
 const productController = require('../Controllers/productController')
+const orderController = require('../Controllers/orderController')
 
 const { signup, login, update, forgotPassword, resetPassword } = userController
 const { createProduct, getAllProducts, updateProduct, deleteProduct } = productController
-const userAuth = require('../Middleware/userAuth')
+const { placeOrder, getUsersOrders } = orderController
 
 const router = express.Router()
 
@@ -26,10 +28,14 @@ router.post('/login', login )
  // Create a new product
     router.post("/:id/products", userAuth.isVendor, createProduct);
     // Retrieve all products
-    router.get("/:id/products/all", userAuth.isVendor,  getAllProducts);
+    router.get("/:id/products/all", userAuth.isLoggedin, getAllProducts);
     // Update a product with id
     router.put("/:id/products/:id", userAuth.isVendor,  updateProduct);
     // Delete a product with id
     router.delete("/:id/products/:id", userAuth.isVendor,  deleteProduct);
+
+// routes for orders
+router.post("/:id/orders", userAuth.isLoggedin, placeOrder);
+router.get("/:id/orders/all", getUsersOrders);
 
 module.exports = router
